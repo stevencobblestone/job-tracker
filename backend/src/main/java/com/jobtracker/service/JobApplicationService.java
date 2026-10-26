@@ -2,6 +2,7 @@ package com.jobtracker.service;
 
 import com.jobtracker.model.ApplicationStatus;
 import com.jobtracker.model.JobApplication;
+import com.jobtracker.model.SalaryPeriod;
 import com.jobtracker.model.StatusEvent;
 import com.jobtracker.repository.JobApplicationRepository;
 import com.jobtracker.repository.StatusEventRepository;
@@ -103,6 +104,9 @@ public class JobApplicationService {
         app.setLocation(r.location());
         app.setSalaryMin(r.salaryMin());
         app.setSalaryMax(r.salaryMax());
+        // Pay type only means something when there's a salary; default to yearly if not given.
+        boolean hasSalary = r.salaryMin() != null || r.salaryMax() != null;
+        app.setSalaryPeriod(!hasSalary ? null : r.salaryPeriod() != null ? r.salaryPeriod() : SalaryPeriod.YEARLY);
         app.setNotes(r.notes());
         app.setAppliedDate(r.appliedDate());
     }

@@ -27,7 +27,7 @@ import { JobApplication, ageInDays, formatDay, formatSalary, statusInfo } from '
           <span class="col-stage stage-cell">
             <span class="stage-dot" [style.background]="info(app).color"></span>{{ info(app).label }}
           </span>
-          <span class="col-comp mono-dark">{{ formatSalary(app.salaryMin, app.salaryMax) || '—' }}</span>
+          <span class="col-comp mono-dark">{{ formatSalary(app) || '—' }}</span>
           <span class="col-location mono">{{ app.location || '—' }}</span>
           <span class="col-date mono">{{ app.appliedDate ? formatDay(app.appliedDate) : '—' }}</span>
           <span class="col-age mono">{{ ageInDays(app) }}D</span>

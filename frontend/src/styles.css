@@ -331,6 +331,20 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .textarea { height: auto; padding: 9px 10px; line-height: 17px; resize: vertical; }
 .range { display: flex; align-items: center; gap: 6px; }
 .range-sep { color: var(--ink-4); }
+.money { position: relative; flex: 1; min-width: 0; }
+.money .input { padding-left: 20px; }
+.money-prefix {
+  position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+  font-size: 12px; color: var(--ink-3); pointer-events: none;
+}
+.field-label-row { display: flex; justify-content: space-between; align-items: center; }
+.field-hint { font-size: 10.5px; color: var(--ink-3); }
+.mini-toggle { display: flex; gap: 1px; padding: 1px; background: var(--field); border: 1px solid var(--line); }
+.mini-toggle button {
+  height: 18px; padding: 0 7px; border: 1px solid transparent; background: none;
+  font: 8px var(--font-mono); letter-spacing: 1px; text-transform: uppercase; color: var(--ink-3);
+}
+.mini-toggle button.selected { background: var(--white); border-color: var(--line); color: var(--ink); }
 .segment {
   display: flex; flex-wrap: wrap; gap: 2px; padding: 3px;
   background: var(--field); border: 1px solid var(--line);

@@ -23,6 +23,9 @@ public class JobApplication {
     private Integer salaryMin;
     private Integer salaryMax;
 
+    @Enumerated(EnumType.STRING)
+    private SalaryPeriod salaryPeriod; // null when no salary is set
+
     @Column(columnDefinition = "text")
     private String notes;
 
@@ -52,6 +55,8 @@ public class JobApplication {
     public void setSalaryMin(Integer salaryMin) { this.salaryMin = salaryMin; }
     public Integer getSalaryMax() { return salaryMax; }
     public void setSalaryMax(Integer salaryMax) { this.salaryMax = salaryMax; }
+    public SalaryPeriod getSalaryPeriod() { return salaryPeriod; }
+    public void setSalaryPeriod(SalaryPeriod salaryPeriod) { this.salaryPeriod = salaryPeriod; }
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
     public LocalDate getAppliedDate() { return appliedDate; }

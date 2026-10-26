@@ -46,12 +46,28 @@
 
       <div class="field-row">
         <div class="field">
-          <span class="field-label">COMPENSATION RANGE</span>
+          <span class="field-label-row">
+            <span class="field-label">COMPENSATION</span>
+            <!-- Pay type toggle: are these numbers a yearly salary or an hourly rate? -->
+            <span class="mini-toggle">
+              <button type="button" [class.selected]="!hourly" (click)="setPeriod('YEARLY')">Yearly</button>
+              <button type="button" [class.selected]="hourly" (click)="setPeriod('HOURLY')">Hourly</button>
+            </span>
+          </span>
           <div class="range">
-            <input class="input" formControlName="salaryMin" type="number" min="0" placeholder="Min, e.g. 130000" aria-label="Salary min" />
+            <span class="money">
+              <span class="money-prefix">$</span>
+              <input class="input" formControlName="salaryMin" type="number" min="0"
+                     [placeholder]="hourly ? '25' : '130000'" aria-label="Salary min" />
+            </span>
             <span class="range-sep">—</span>
-            <input class="input" formControlName="salaryMax" type="number" min="0" placeholder="Max" aria-label="Salary max" />
+            <span class="money">
+              <span class="money-prefix">$</span>
+              <input class="input" formControlName="salaryMax" type="number" min="0"
+                     [placeholder]="hourly ? '35' : '150000'" aria-label="Salary max" />
+            </span>
           </div>
+          <small class="field-hint">{{ hourly ? 'Per hour.' : 'Per year.' }} Fill one box for a set amount, or leave both blank.</small>
           @if (form.errors?.['salaryRange']) {
             <small class="error">Min can't be more than max.</small>
           }

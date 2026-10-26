@@ -23,10 +23,10 @@
               <span class="card-company">{{ app.company }}</span>
             </div>
             <div class="card-role">{{ app.title }}</div>
-            @if (formatSalary(app.salaryMin, app.salaryMax) || app.location) {
+            @if (formatSalary(app) || app.location) {
               <div class="card-meta">
-                <span class="card-salary">{{ formatSalary(app.salaryMin, app.salaryMax) }}</span>
-                @if (formatSalary(app.salaryMin, app.salaryMax) && app.location) {
+                <span class="card-salary">{{ formatSalary(app) }}</span>
+                @if (formatSalary(app) && app.location) {
                   <span class="meta-sep">·</span>
                 }
                 <span>{{ app.location }}</span>

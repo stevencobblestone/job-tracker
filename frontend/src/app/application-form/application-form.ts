@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, input, output } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Icon } from '../icon/icon';
-import { JobApplication, JobApplicationInput, STATUSES, Status } from '../models';
+import { JobApplication, JobApplicationInput, STATUSES, SalaryPeriod, Status } from '../models';
 
 /** "Add a role" pop-up for adding a new application or editing/deleting an existing one. */
 @Component({
@@ -34,6 +34,7 @@ export class ApplicationForm implements OnInit {
       location: [''],
       salaryMin: [null as number | null, Validators.min(0)],
       salaryMax: [null as number | null, Validators.min(0)],
+      salaryPeriod: ['YEARLY' as SalaryPeriod],
       appliedDate: [''],
       status: ['WISHLIST' as Status],
       notes: [''],
@@ -51,6 +52,7 @@ export class ApplicationForm implements OnInit {
         location: app.location ?? '',
         appliedDate: app.appliedDate ?? '',
         notes: app.notes ?? '',
+        salaryPeriod: app.salaryPeriod ?? 'YEARLY',
       });
     } else {
       this.form.patchValue({ status: this.initialStatus() });
@@ -61,12 +63,21 @@ export class ApplicationForm implements OnInit {
     this.form.controls.status.setValue(status);
   }
 
+  setPeriod(period: SalaryPeriod) {
+    this.form.controls.salaryPeriod.setValue(period);
+  }
+
+  get hourly() {
+    return this.form.controls.salaryPeriod.value === 'HOURLY';
+  }
+
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched(); // show error messages
       return;
     }
     const v = this.form.getRawValue();
+    const hasSalary = v.salaryMin != null || v.salaryMax != null;
     // Empty text boxes are sent as null so the database stores "no value".
     this.saved.emit({
       company: v.company!.trim(),
@@ -75,6 +86,7 @@ export class ApplicationForm implements OnInit {
       location: v.location || null,
       salaryMin: v.salaryMin ?? null,
       salaryMax: v.salaryMax ?? null,
+      salaryPeriod: hasSalary ? v.salaryPeriod! : null, // pay type only matters when there's a salary
       appliedDate: v.appliedDate || null,
       status: v.status!,
       notes: v.notes || null,

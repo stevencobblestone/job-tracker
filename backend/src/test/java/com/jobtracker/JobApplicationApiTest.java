@@ -61,6 +61,20 @@ class JobApplicationApiTest {
     }
 
     @Test
+    void salaryPeriodIsSavedAndDefaulted() throws Exception {
+        long hourly = create("""
+                {"company":"A","title":"Intern","salaryMin":15,"salaryMax":40,"salaryPeriod":"HOURLY"}""");
+        long yearly = create("""
+                {"company":"B","title":"Dev","salaryMin":90000}""");  // no period given
+        long blank = create("""
+                {"company":"C","title":"Dev","salaryPeriod":"HOURLY"}"""); // no salary given
+
+        mvc.perform(get("/api/applications/" + hourly)).andExpect(jsonPath("$.salaryPeriod").value("HOURLY"));
+        mvc.perform(get("/api/applications/" + yearly)).andExpect(jsonPath("$.salaryPeriod").value("YEARLY"));
+        mvc.perform(get("/api/applications/" + blank)).andExpect(jsonPath("$.salaryPeriod").doesNotExist());
+    }
+
+    @Test
     void statusDefaultsToWishlist() throws Exception {
         long id = create("""
                 {"company":"Acme","title":"Dev"}""");

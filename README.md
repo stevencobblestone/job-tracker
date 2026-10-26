@@ -10,7 +10,7 @@ Drag an application between columns to update its status; every status change is
 - Kanban board with one column per status: Wishlist, Applied, Phone screen, Interview, Offer, Rejected, Withdrawn
 - Drag-and-drop between columns (Angular CDK) updates the status through the REST API
 - Table view of the same data, plus search by company or role
-- Add, edit and delete applications: company, title, URL, location, salary range, notes, applied date
+- Add, edit and delete applications: company, title, URL, location, salary (yearly or hourly; a range, one amount, or blank), notes, applied date
 - Status history: each change is logged as an event row
 - Stats strip (tracked, active, interviews, offers, response rate) and an Overview page with pipeline bars
 - Input validation on both frontend and backend
@@ -151,7 +151,8 @@ job-tracker/
 
 ## Database
 
-Two tables, created by `backend/src/main/resources/db/migration/V1__create_tables.sql`:
+Two tables, created by the Flyway migrations in `backend/src/main/resources/db/migration/`
+(`V1` creates the tables, `V2` adds the yearly/hourly pay type):
 
 - `job_application`: one row per application
 - `status_event`: one row per status change (`from_status` → `to_status`, with a timestamp)

@@ -32,6 +32,7 @@ export interface JobApplication {
   location: string | null;
   salaryMin: number | null;
   salaryMax: number | null;
+  salaryPeriod: SalaryPeriod | null; // null when no salary is set
   notes: string | null;
   appliedDate: string | null; // "YYYY-MM-DD"
   status: Status;
@@ -45,18 +46,23 @@ export type JobApplicationInput = Omit<JobApplication, 'id' | 'createdAt' | 'upd
 /** Response of GET /api/stats, e.g. { APPLIED: 3, OFFER: 1, ... } */
 export type Stats = Record<Status, number>;
 
+export type SalaryPeriod = 'YEARLY' | 'HOURLY';
+
 /**
- * 145000, 165000 -> "$145–165K". Small numbers (like an hourly rate 15, 40) stay as-is: "$15–40".
- * Returns "" when no salary is set.
+ * Yearly 145000–165000 -> "$145–165K"; hourly 15–40 -> "$15–40/hr".
+ * A single amount works too ("$120K", "$25/hr"). Returns "" when no salary is set.
  */
-export function formatSalary(min: number | null, max: number | null): string {
-  const big = (min ?? 0) >= 1000 || (max ?? 0) >= 1000;
-  const fmt = (n: number) => (big ? String(Math.round(n / 1000)) : String(n));
-  const unit = big ? 'K' : '';
-  if (min != null && max != null) return `$${fmt(min)}–${fmt(max)}${unit}`;
-  if (min != null) return `$${fmt(min)}${unit}+`;
-  if (max != null) return `Up to $${fmt(max)}${unit}`;
-  return '';
+export function formatSalary(app: Pick<JobApplication, 'salaryMin' | 'salaryMax' | 'salaryPeriod'>): string {
+  const { salaryMin: min, salaryMax: max } = app;
+  if (min == null && max == null) return '';
+  const hourly = app.salaryPeriod === 'HOURLY';
+  // Yearly amounts are shown in thousands ("145K"); hourly amounts as they are.
+  const inK = !hourly && Math.max(min ?? 0, max ?? 0) >= 1000;
+  const fmt = (n: number) => (inK ? String(Math.round(n / 1000)) : String(n));
+  const unit = hourly ? '/hr' : inK ? 'K' : '';
+
+  if (min != null && max != null && min !== max) return `$${fmt(min)}–${fmt(max)}${unit}`;
+  return `$${fmt((min ?? max)!)}${unit}`; // one amount (or min equals max)
 }
 
 /** "2026-05-02" -> "MAY 02". Parsed by hand so the date never shifts with time zones. */

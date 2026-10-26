@@ -1,6 +1,7 @@
 package com.jobtracker.web;
 
 import com.jobtracker.model.ApplicationStatus;
+import com.jobtracker.model.SalaryPeriod;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ public record JobApplicationRequest(
         @Size(max = 200) String location,
         @PositiveOrZero Integer salaryMin,
         @PositiveOrZero Integer salaryMax,
+        SalaryPeriod salaryPeriod, // optional; YEARLY or HOURLY (defaults to YEARLY when a salary is given)
         String notes,
         LocalDate appliedDate,
         ApplicationStatus status // optional; defaults to WISHLIST on create

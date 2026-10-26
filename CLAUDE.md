@@ -20,8 +20,8 @@ The backend reads DB settings from environment variables, with local defaults:
 `DB_PASSWORD` (jobtracker). Pointing at AWS Aurora PostgreSQL later = just change these.
 
 ## Data model
-- `job_application`: id, company, title, url, location, salary_min, salary_max, notes,
-  applied_date, status, created_at, updated_at
+- `job_application`: id, company, title, url, location, salary_min, salary_max,
+  salary_period (YEARLY | HOURLY, null when no salary), notes, applied_date, status, created_at, updated_at
 - `status_event`: id, application_id (FK, cascade delete), from_status, to_status, changed_at
   — one row per status change (history).
 - Statuses: WISHLIST, APPLIED, PHONE_SCREEN, INTERVIEW, OFFER, REJECTED, WITHDRAWN

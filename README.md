@@ -126,6 +126,7 @@ A missing id returns `404 Not Found`.
 ```
 job-tracker/
 ├── docker-compose.yml          # database + backend + frontend containers
+├── design/pursuit-ui.html      # UI design reference (open in a browser)
 ├── backend/                    # Spring Boot API (+ Dockerfile)
 │   └── src/main/
 │       ├── java/com/jobtracker/

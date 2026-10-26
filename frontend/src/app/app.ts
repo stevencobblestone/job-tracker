@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { retry } from 'rxjs';
 import { ApplicationService } from './application.service';
 import { JobApplication, JobApplicationInput, Stats, Status } from './models';
 import { Icon } from './icon/icon';
@@ -44,20 +45,36 @@ export class App implements OnInit {
   readonly editing = signal<JobApplication | null>(null);
   readonly newStatus = signal<Status>('WISHLIST');
 
+  // True until the first data arrives. On free hosting the backend sleeps when idle,
+  // so the first load can take up to a minute; after 2 seconds we explain that.
+  readonly loading = signal(true);
+  readonly slowStart = signal(false);
+
   ngOnInit() {
+    setTimeout(() => this.slowStart.set(this.loading()), 2000);
     this.reload();
   }
 
   /** Fetch the list and the stats again from the backend. */
   reload() {
-    this.api.list().subscribe({
-      next: (apps) => {
-        this.applications.set(apps);
-        this.error.set(null);
-      },
-      error: () => this.error.set('Could not reach the backend. Is it running on port 8080?'),
-    });
-    this.api.stats().subscribe({ next: (s) => this.stats.set(s), error: () => {} });
+    this.api
+      .list()
+      .pipe(retry({ count: 12, delay: 5000 })) // keep trying for ~1 minute while the server wakes up
+      .subscribe({
+        next: (apps) => {
+          this.applications.set(apps);
+          this.error.set(null);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.error.set('Could not reach the backend. Is it running?');
+        },
+      });
+    this.api
+      .stats()
+      .pipe(retry({ count: 12, delay: 5000 }))
+      .subscribe({ next: (s) => this.stats.set(s), error: () => {} });
   }
 
   openNew(status: Status = 'WISHLIST') {

@@ -1,0 +1,52 @@
+# Render Blueprint: deploys the public demo (free plan). See "Deploy the demo" in README.md.
+# The database is NOT here: it lives on Neon (free, doesn't expire). You paste its details when Render asks.
+services:
+  # Backend: Spring Boot API, built from backend/Dockerfile
+  - type: web
+    name: pursuit-api
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/stats
+    envVars:
+      # From your Neon connection details (Render asks for these the first time)
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_PARAMS
+        value: "?sslmode=require"            # Neon only accepts encrypted connections
+      - key: DEMO_DATA
+        value: "true"                        # load sample data and reset it nightly
+      - key: TZ
+        value: America/New_York
+      # Fit Java into the free plan's 512 MB and start faster after sleeping
+      - key: JAVA_TOOL_OPTIONS
+        value: "-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xss512k"
+
+  # Frontend: Angular, built once and served as static files (free, never sleeps)
+  - type: web
+    name: pursuit
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npx ng build
+    staticPublishPath: ./frontend/dist/frontend/browser
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+    routes:
+      # Forward API calls to the backend. If Render gives the backend a different
+      # address than pursuit-api.onrender.com, change it here (and in the README).
+      - type: rewrite
+        source: /api/*
+        destination: https://pursuit-api.onrender.com/api/*
+      # Everything else is the Angular app
+      - type: rewrite
+        source: /*
+        destination: /index.html

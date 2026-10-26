@@ -14,6 +14,13 @@ A small MVP for tracking job applications on a kanban board. No login/auth.
   App at http://localhost:3000. Backend port is not published, to avoid clashing with local dev.
 - `docker compose up -d db` starts only the database for local dev (backend on 8080, `ng serve` on 4200).
 
+## Hosting (public demo)
+- `render.yaml`: Render free plan. Backend = Docker web service `pursuit-api` (sleeps when idle),
+  frontend = static site `pursuit` with a rewrite `/api/*` → backend URL. Database on Neon (free).
+- `DEMO_DATA=true` loads `demo-data.sql` (wipes + 12 sample apps) at startup and nightly. Never on real data.
+- CI: `.github/workflows/ci.yml` runs backend tests + frontend build on every push.
+- README media lives in `docs/screenshots/`.
+
 ## Configuration
 The backend reads DB settings from environment variables, with local defaults:
 `DB_HOST` (localhost), `DB_PORT` (5432), `DB_NAME` (jobtracker), `DB_USER` (jobtracker),

@@ -42,6 +42,12 @@
       <app-metrics [stats]="stats()" />
     </div>
 
+    @if (loading() && slowStart()) {
+      <p class="info-banner">
+        <span class="spinner"></span>
+        Waking up the server… This demo runs on free hosting that sleeps when idle, so the first load can take up to a minute.
+      </p>
+    }
     @if (error()) {
       <p class="error-banner">{{ error() }}</p>
     }

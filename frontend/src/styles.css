@@ -225,6 +225,26 @@ button { font: inherit; color: inherit; cursor: pointer; }
   font: 8.5px var(--font-mono); letter-spacing: 1.1px; color: var(--ink-2); text-transform: uppercase;
 }
 .card-role { font: 600 14.5px/18px var(--font-text); }
+.card-link {
+  display: inline-flex; padding: 3px; color: var(--ink-3); border: 1px solid transparent;
+}
+.card-link:hover { color: var(--brand); border-color: var(--line); background: var(--field); }
+.open-link {
+  display: inline-flex; align-items: center; gap: 3px; text-decoration: none;
+  font: 8px var(--font-mono); letter-spacing: 1px; color: var(--brand);
+}
+.open-link:hover { text-decoration: underline; }
+
+/* Status history in the edit pop-up */
+.history { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); }
+.history-item {
+  display: flex; align-items: center; gap: 8px; padding: 7px 10px;
+  border-bottom: 1px solid var(--line); font-size: 12px;
+}
+.history-item:last-child { border-bottom: 0; }
+.history-text { flex: 1; color: var(--ink-2); }
+.history-text b { color: var(--ink); font-weight: 600; }
+.history-date { font: 8.5px var(--font-mono); letter-spacing: 0.6px; color: var(--ink-3); }
 .card-meta { display: flex; flex-wrap: wrap; gap: 6px; font: 9.5px var(--font-mono); color: var(--ink-3); }
 .card-salary { color: var(--ink-2); }
 .meta-sep { color: var(--ink-4); }

@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { Icon } from '../icon/icon';
-import { JobApplication, STATUSES, Status, formatDay, formatSalary } from '../models';
+import { JobApplication, STATUSES, Status, formatDay, formatSalary, linkFor } from '../models';
 
 /** Kanban board: one column per status. Dragging a card to another column emits statusChange. */
 @Component({
@@ -18,6 +18,7 @@ export class Board {
   readonly statuses = STATUSES;
   readonly formatSalary = formatSalary;
   readonly formatDay = formatDay;
+  readonly linkFor = linkFor;
 
   /** Applications grouped by status, e.g. { APPLIED: [...], OFFER: [...] }. */
   readonly columns = computed(() => {

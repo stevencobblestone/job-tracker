@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { JobApplication, JobApplicationInput, Stats, Status } from './models';
+import { JobApplication, JobApplicationInput, Stats, Status, StatusEvent } from './models';
 
 /** All calls to the backend REST API live here. */
 @Injectable({ providedIn: 'root' })
@@ -26,6 +26,11 @@ export class ApplicationService {
 
   delete(id: number) {
     return this.http.delete<void>(`${this.base}/${id}`);
+  }
+
+  /** Status history for one application, oldest first. */
+  events(id: number) {
+    return this.http.get<StatusEvent[]>(`${this.base}/${id}/events`);
   }
 
   stats() {

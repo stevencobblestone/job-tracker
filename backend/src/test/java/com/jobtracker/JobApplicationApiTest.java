@@ -14,6 +14,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.LocalDate;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,6 +74,31 @@ class JobApplicationApiTest {
         mvc.perform(get("/api/applications/" + hourly)).andExpect(jsonPath("$.salaryPeriod").value("HOURLY"));
         mvc.perform(get("/api/applications/" + yearly)).andExpect(jsonPath("$.salaryPeriod").value("YEARLY"));
         mvc.perform(get("/api/applications/" + blank)).andExpect(jsonPath("$.salaryPeriod").doesNotExist());
+    }
+
+    @Test
+    void appliedDateIsFilledWhenMovedToApplied() throws Exception {
+        String today = LocalDate.now().toString();
+
+        // Wishlist -> Applied with no date: date becomes today
+        long id = create("""
+                {"company":"A","title":"Dev"}""");
+        mvc.perform(get("/api/applications/" + id)).andExpect(jsonPath("$.appliedDate").doesNotExist());
+        mvc.perform(patch("/api/applications/" + id + "/status").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"status\":\"APPLIED\"}"))
+                .andExpect(jsonPath("$.appliedDate").value(today));
+
+        // Created straight into Applied: date becomes today too
+        long direct = create("""
+                {"company":"B","title":"Dev","status":"APPLIED"}""");
+        mvc.perform(get("/api/applications/" + direct)).andExpect(jsonPath("$.appliedDate").value(today));
+
+        // A date the user already entered is never overwritten
+        long dated = create("""
+                {"company":"C","title":"Dev","appliedDate":"2026-01-15"}""");
+        mvc.perform(patch("/api/applications/" + dated + "/status").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"status\":\"APPLIED\"}"))
+                .andExpect(jsonPath("$.appliedDate").value("2026-01-15"));
     }
 
     @Test

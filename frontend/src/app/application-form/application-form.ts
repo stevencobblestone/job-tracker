@@ -1,7 +1,11 @@
-import { Component, OnInit, inject, input, output } from '@angular/core';
+import { Component, OnInit, inject, input, output, signal } from '@angular/core';
+import { ApplicationService } from '../application.service';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Icon } from '../icon/icon';
-import { JobApplication, JobApplicationInput, STATUSES, SalaryPeriod, Status } from '../models';
+import {
+  JobApplication, JobApplicationInput, STATUSES, SalaryPeriod, Status, StatusEvent,
+  formatDateTime, linkFor, statusInfo,
+} from '../models';
 
 /** "Add a role" pop-up for adding a new application or editing/deleting an existing one. */
 @Component({
@@ -24,7 +28,13 @@ export class ApplicationForm implements OnInit {
   cancelled = output<void>();
 
   readonly statuses = STATUSES;
+  readonly statusInfo = statusInfo;
+  readonly formatDateTime = formatDateTime;
   private fb = inject(FormBuilder);
+  private api = inject(ApplicationService);
+
+  /** Status history, newest first (only loaded when editing). */
+  readonly history = signal<StatusEvent[]>([]);
 
   readonly form = this.fb.group(
     {
@@ -54,6 +64,10 @@ export class ApplicationForm implements OnInit {
         notes: app.notes ?? '',
         salaryPeriod: app.salaryPeriod ?? 'YEARLY',
       });
+      this.api.events(app.id).subscribe({
+        next: (events) => this.history.set([...events].reverse()),
+        error: () => {}, // history is a nice-to-have; the form still works without it
+      });
     } else {
       this.form.patchValue({ status: this.initialStatus() });
     }
@@ -65,6 +79,11 @@ export class ApplicationForm implements OnInit {
 
   setPeriod(period: SalaryPeriod) {
     this.form.controls.salaryPeriod.setValue(period);
+  }
+
+  /** Openable version of the URL box's current value (null if it isn't a link). */
+  get link() {
+    return linkFor(this.form.controls.url.value);
   }
 
   get hourly() {

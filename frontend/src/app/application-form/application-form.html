@@ -27,10 +27,15 @@
         </label>
       </div>
 
-      <label class="field">
-        <span class="field-label">JOB POSTING LINK</span>
-        <input class="input" formControlName="url" type="url" placeholder="https://" />
-      </label>
+      <div class="field">
+        <span class="field-label-row">
+          <span class="field-label">JOB POSTING LINK</span>
+          @if (link) {
+            <a class="open-link" [href]="link" target="_blank" rel="noopener">OPEN <app-icon name="arrow-up-right" [size]="10" /></a>
+          }
+        </span>
+        <input class="input" formControlName="url" placeholder="https://" aria-label="Job posting link" />
+      </div>
 
       <div class="field">
         <span class="field-label">STAGE</span>
@@ -91,6 +96,28 @@
         <textarea class="input textarea" formControlName="notes" rows="3"
                   placeholder="Who referred you, what the team cares about, next steps…"></textarea>
       </label>
+
+      <!-- Status history (edit mode only): every stage change, newest first -->
+      @if (history().length) {
+        <div class="field">
+          <span class="field-label">HISTORY</span>
+          <ol class="history">
+            @for (e of history(); track e.id) {
+              <li class="history-item">
+                <span class="stage-dot small" [style.background]="statusInfo(e.toStatus).color"></span>
+                <span class="history-text">
+                  @if (e.fromStatus) {
+                    {{ statusInfo(e.fromStatus).label }} → <b>{{ statusInfo(e.toStatus).label }}</b>
+                  } @else {
+                    Added as <b>{{ statusInfo(e.toStatus).label }}</b>
+                  }
+                </span>
+                <span class="history-date">{{ formatDateTime(e.changedAt) }}</span>
+              </li>
+            }
+          </ol>
+        </div>
+      }
     </div>
 
     <div class="modal-foot">

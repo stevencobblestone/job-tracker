@@ -39,7 +39,11 @@ The backend reads DB settings from environment variables, with local defaults:
   are CSS variables at the top of `frontend/src/styles.css`. All styles live in that one file.
 - Applications page: Board view (one column per status, drag → PATCH status) or Table view;
   search box filters by company/role. Overview page: pipeline bars per status.
-- "Add a role" modal for add/edit/delete; metrics strip computed from `/api/stats`.
+- "Add a role" modal for add/edit/delete; in edit mode it shows the status history
+  (`GET /{id}/events`). Job links open from cards, table rows and the modal (`linkFor` in models.ts).
+- Metrics strip computed from `/api/stats`.
+- Backend rule: moving to (or creating in) APPLIED with no applied date sets it to today.
+  The backend container's `TZ` (docker-compose, default America/New_York) decides what "today" is.
 - Not built (no backend for them yet): Interviews, Contacts, Documents, Source, Next step.
 
 ## Build stages

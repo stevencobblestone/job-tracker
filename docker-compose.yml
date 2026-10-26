@@ -27,6 +27,7 @@ services:
       DB_NAME: ${DB_NAME:-jobtracker}
       DB_USER: ${DB_USER:-jobtracker}
       DB_PASSWORD: ${DB_PASSWORD:-jobtracker}
+      TZ: ${TZ:-America/New_York}         # so "today" (auto-filled applied date) matches your clock
     depends_on:
       db:
         condition: service_healthy        # wait until Postgres is ready

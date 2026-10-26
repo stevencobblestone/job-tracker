@@ -1,9 +1,11 @@
 import { Component, input, output } from '@angular/core';
-import { JobApplication, ageInDays, formatDay, formatSalary, statusInfo } from '../models';
+import { Icon } from '../icon/icon';
+import { JobApplication, ageInDays, formatDay, formatSalary, linkFor, statusInfo } from '../models';
 
 /** Table view of the same applications as the board. Click a row to edit it. */
 @Component({
   selector: 'app-applications-table',
+  imports: [Icon],
   template: `
     <div class="table-panel">
       <div class="table-row table-head">
@@ -23,6 +25,10 @@ import { JobApplication, ageInDays, formatDay, formatSalary, statusInfo } from '
               <span class="row-role">{{ app.title }}</span>
               <span class="row-company">{{ app.company }}</span>
             </span>
+            @if (linkFor(app.url); as link) {
+              <a class="card-link" [href]="link" target="_blank" rel="noopener" title="Open job posting"
+                 (click)="$event.stopPropagation()"><app-icon name="arrow-up-right" [size]="12" /></a>
+            }
           </span>
           <span class="col-stage stage-cell">
             <span class="stage-dot" [style.background]="info(app).color"></span>{{ info(app).label }}
@@ -46,4 +52,5 @@ export class ApplicationsTable {
   readonly formatSalary = formatSalary;
   readonly formatDay = formatDay;
   readonly ageInDays = ageInDays;
+  readonly linkFor = linkFor;
 }

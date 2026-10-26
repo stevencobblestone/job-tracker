@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class JobApplicationService {
         JobApplication app = new JobApplication();
         copyFields(request, app);
         app.setStatus(request.status() != null ? request.status() : ApplicationStatus.WISHLIST);
+        fillAppliedDateIfMissing(app);
         app = applications.save(app);
         events.save(new StatusEvent(app.getId(), null, app.getStatus())); // first history entry
         return app;
@@ -94,6 +96,14 @@ public class JobApplicationService {
         if (app.getStatus() != newStatus) {
             events.save(new StatusEvent(app.getId(), app.getStatus(), newStatus));
             app.setStatus(newStatus);
+            fillAppliedDateIfMissing(app);
+        }
+    }
+
+    /** Moving to APPLIED with no applied date? Assume it was sent today. */
+    private void fillAppliedDateIfMissing(JobApplication app) {
+        if (app.getStatus() == ApplicationStatus.APPLIED && app.getAppliedDate() == null) {
+            app.setAppliedDate(LocalDate.now());
         }
     }
 

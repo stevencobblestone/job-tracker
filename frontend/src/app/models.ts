@@ -43,6 +43,33 @@ export interface JobApplication {
 /** What we send on create/update (the server fills in id and timestamps). */
 export type JobApplicationInput = Omit<JobApplication, 'id' | 'createdAt' | 'updatedAt'>;
 
+/** One history row from GET /api/applications/{id}/events. fromStatus is null for "added". */
+export interface StatusEvent {
+  id: number;
+  fromStatus: Status | null;
+  toStatus: Status;
+  changedAt: string;
+}
+
+/**
+ * Turns what the user typed into a link we can open, or null if it doesn't look like one.
+ * "acme.com/jobs/1" -> "https://acme.com/jobs/1"; "test" -> null.
+ */
+export function linkFor(url: string | null): string | null {
+  const u = url?.trim();
+  if (!u) return null;
+  if (/^https?:\/\//i.test(u)) return u;
+  return /^[\w-]+(\.[\w-]+)+(\/.*)?$/.test(u) ? 'https://' + u : null;
+}
+
+/** "2026-10-26T18:57:46Z" -> "OCT 26 · 2:57 PM" in the viewer's own time zone. */
+export function formatDateTime(iso: string): string {
+  const d = new Date(iso);
+  const day = d.toLocaleString('en-US', { month: 'short', day: '2-digit' }).toUpperCase();
+  const time = d.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit' });
+  return `${day} · ${time}`;
+}
+
 /** Response of GET /api/stats, e.g. { APPLIED: 3, OFFER: 1, ... } */
 export type Stats = Record<Status, number>;
 

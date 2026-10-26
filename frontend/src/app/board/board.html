@@ -21,6 +21,11 @@
             <div class="card-head">
               <span class="company-mark" [style.background]="col.color">{{ app.company.charAt(0) }}</span>
               <span class="card-company">{{ app.company }}</span>
+              @if (linkFor(app.url); as link) {
+                <!-- stopPropagation: opening the link shouldn't also open the edit pop-up -->
+                <a class="card-link" [href]="link" target="_blank" rel="noopener" title="Open job posting"
+                   (click)="$event.stopPropagation()"><app-icon name="arrow-up-right" [size]="12" /></a>
+              }
             </div>
             <div class="card-role">{{ app.title }}</div>
             @if (formatSalary(app) || app.location) {

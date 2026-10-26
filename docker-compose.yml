@@ -1,0 +1,21 @@
+# Local PostgreSQL for development. Start with: docker compose up -d
+services:
+  db:
+    image: postgres:16
+    container_name: jobtracker-db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-jobtracker}
+      POSTGRES_USER: ${DB_USER:-jobtracker}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-jobtracker}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # keeps data between restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-jobtracker} -d ${DB_NAME:-jobtracker}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

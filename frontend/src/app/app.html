@@ -1,0 +1,23 @@
+<header class="topbar">
+  <h1>Job Tracker</h1>
+  <button class="primary" (click)="openNew()">+ Add application</button>
+</header>
+
+<main>
+  @if (error()) {
+    <p class="error-banner">{{ error() }}</p>
+  }
+
+  <app-stats-bar [stats]="stats()" />
+
+  <app-board [applications]="applications()" (edit)="openEdit($event)" (statusChange)="changeStatus($event)" />
+</main>
+
+@if (formOpen()) {
+  <app-application-form
+    [application]="editing()"
+    (saved)="save($event)"
+    (deleted)="remove()"
+    (cancelled)="closeForm()"
+  />
+}

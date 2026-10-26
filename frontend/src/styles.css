@@ -1,0 +1,114 @@
+/* Global styles for the whole app (kept in one file for simplicity). */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #f4f5f7;
+  color: #172b4d;
+}
+
+button {
+  font: inherit;
+  padding: 6px 14px;
+  border: 1px solid #c1c7d0;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+button.primary { background: #0052cc; border-color: #0052cc; color: #fff; }
+button.danger { color: #de350b; border-color: #de350b; }
+
+/* ---- Header & stats ---- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid #dfe1e6;
+}
+.topbar h1 { margin: 0; font-size: 1.3rem; }
+main { padding: 16px 20px; }
+
+.stats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.stat {
+  background: #fff;
+  border: 1px solid #dfe1e6;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+.stat.total { background: #deebff; border-color: #b3d4ff; }
+
+.error-banner {
+  background: #ffebe6;
+  color: #bf2600;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+/* ---- Board ---- */
+.board { display: flex; gap: 12px; overflow-x: auto; align-items: flex-start; }
+.column {
+  flex: 0 0 220px;
+  background: #ebecf0;
+  border-radius: 8px;
+  padding: 8px;
+}
+.column h2 { font-size: 0.9rem; margin: 4px 4px 8px; }
+.count { color: #6b778c; font-weight: normal; }
+.card-list { min-height: 60px; display: flex; flex-direction: column; gap: 8px; }
+
+.card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 8px 10px;
+  box-shadow: 0 1px 2px rgba(9, 30, 66, 0.25);
+  cursor: grab;
+  font-size: 0.9rem;
+}
+.muted { color: #6b778c; font-size: 0.8rem; }
+.empty { color: #a5adba; font-size: 0.8rem; text-align: center; padding: 16px 0; }
+
+/* Drag-and-drop visuals (classes added by Angular CDK) */
+.cdk-drag-preview { box-shadow: 0 6px 16px rgba(9, 30, 66, 0.3); }
+.cdk-drag-placeholder { opacity: 0.3; }
+.cdk-drag-animating, .card-list.cdk-drop-list-dragging .card:not(.cdk-drag-placeholder) {
+  transition: transform 200ms ease;
+}
+
+/* ---- Form pop-up ---- */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 30, 66, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.dialog {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dialog h2 { margin: 0 0 4px; }
+.dialog label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; flex: 1; }
+.dialog input, .dialog select, .dialog textarea {
+  font: inherit;
+  padding: 6px 8px;
+  border: 1px solid #c1c7d0;
+  border-radius: 4px;
+}
+.row { display: flex; gap: 12px; }
+.error { color: #de350b; }
+.actions { display: flex; gap: 8px; margin-top: 8px; }
+.spacer { flex: 1; }

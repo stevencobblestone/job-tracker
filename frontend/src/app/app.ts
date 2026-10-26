@@ -1,0 +1,94 @@
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { ApplicationService } from './application.service';
+import { JobApplication, JobApplicationInput, Stats, Status } from './models';
+import { Board } from './board/board';
+import { StatsBar } from './stats-bar/stats-bar';
+import { ApplicationForm } from './application-form/application-form';
+
+/** Top-level page: loads data from the API and connects the board, stats and form. */
+@Component({
+  selector: 'app-root',
+  imports: [Board, StatsBar, ApplicationForm],
+  templateUrl: './app.html',
+})
+export class App implements OnInit {
+  private api = inject(ApplicationService);
+
+  readonly applications = signal<JobApplication[]>([]);
+  readonly stats = signal<Stats | null>(null);
+  readonly error = signal<string | null>(null);
+
+  // Form state: closed, adding a new application, or editing one.
+  readonly formOpen = signal(false);
+  readonly editing = signal<JobApplication | null>(null);
+
+  ngOnInit() {
+    this.reload();
+  }
+
+  /** Fetch the list and the stats again from the backend. */
+  reload() {
+    this.api.list().subscribe({
+      next: (apps) => {
+        this.applications.set(apps);
+        this.error.set(null);
+      },
+      error: () => this.error.set('Could not reach the backend. Is it running on port 8080?'),
+    });
+    this.api.stats().subscribe({ next: (s) => this.stats.set(s), error: () => {} });
+  }
+
+  openNew() {
+    this.editing.set(null);
+    this.formOpen.set(true);
+  }
+
+  openEdit(app: JobApplication) {
+    this.editing.set(app);
+    this.formOpen.set(true);
+  }
+
+  closeForm() {
+    this.formOpen.set(false);
+  }
+
+  save(input: JobApplicationInput) {
+    const current = this.editing();
+    const request = current ? this.api.update(current.id, input) : this.api.create(input);
+    request.subscribe({
+      next: () => {
+        this.closeForm();
+        this.reload();
+      },
+      error: () => this.error.set('Save failed. Please check the form and try again.'),
+    });
+  }
+
+  remove() {
+    const current = this.editing();
+    if (!current) return;
+    this.api.delete(current.id).subscribe({
+      next: () => {
+        this.closeForm();
+        this.reload();
+      },
+      error: () => this.error.set('Delete failed.'),
+    });
+  }
+
+  /** Called when a card is dropped in a new column. */
+  changeStatus(event: { app: JobApplication; status: Status }) {
+    // Move the card right away so the board feels instant...
+    this.applications.update((apps) =>
+      apps.map((a) => (a.id === event.app.id ? { ...a, status: event.status } : a)),
+    );
+    // ...then save it. Reloading afterwards keeps the board and stats in sync with the server.
+    this.api.changeStatus(event.app.id, event.status).subscribe({
+      next: () => this.reload(),
+      error: () => {
+        this.error.set('Could not change the status.');
+        this.reload(); // put the card back where the server says it is
+      },
+    });
+  }
+}

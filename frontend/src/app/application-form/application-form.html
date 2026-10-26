@@ -1,0 +1,66 @@
+<div class="backdrop" (click)="cancelled.emit()">
+  <!-- stopPropagation: clicking inside the form shouldn't close it -->
+  <form class="dialog" [formGroup]="form" (ngSubmit)="submit()" (click)="$event.stopPropagation()">
+    <h2>{{ application() ? 'Edit application' : 'Add application' }}</h2>
+
+    <label>Company *
+      <input formControlName="company" />
+    </label>
+    @if (form.controls.company.touched && form.controls.company.invalid) {
+      <small class="error">Company is required.</small>
+    }
+
+    <label>Job title *
+      <input formControlName="title" />
+    </label>
+    @if (form.controls.title.touched && form.controls.title.invalid) {
+      <small class="error">Job title is required.</small>
+    }
+
+    <label>Job posting URL
+      <input formControlName="url" type="url" />
+    </label>
+
+    <label>Location
+      <input formControlName="location" />
+    </label>
+
+    <div class="row">
+      <label>Salary min
+        <input formControlName="salaryMin" type="number" min="0" />
+      </label>
+      <label>Salary max
+        <input formControlName="salaryMax" type="number" min="0" />
+      </label>
+    </div>
+    @if (form.errors?.['salaryRange']) {
+      <small class="error">Min salary can't be more than max salary.</small>
+    }
+
+    <div class="row">
+      <label>Applied date
+        <input formControlName="appliedDate" type="date" />
+      </label>
+      <label>Status
+        <select formControlName="status">
+          @for (s of statuses; track s.value) {
+            <option [value]="s.value">{{ s.label }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <label>Notes
+      <textarea formControlName="notes" rows="3"></textarea>
+    </label>
+
+    <div class="actions">
+      @if (application()) {
+        <button type="button" class="danger" (click)="confirmDelete()">Delete</button>
+      }
+      <span class="spacer"></span>
+      <button type="button" (click)="cancelled.emit()">Cancel</button>
+      <button type="submit" class="primary">Save</button>
+    </div>
+  </form>
+</div>

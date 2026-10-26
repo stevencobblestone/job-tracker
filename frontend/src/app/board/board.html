@@ -1,0 +1,25 @@
+<!-- cdkDropListGroup lets cards move between any of the columns inside it -->
+<div class="board" cdkDropListGroup>
+  @for (col of statuses; track col.value) {
+    <section class="column">
+      <h2>{{ col.label }} <span class="count">{{ columns()[col.value].length }}</span></h2>
+
+      <div class="card-list" cdkDropList [cdkDropListData]="col.value" (cdkDropListDropped)="onDrop($event)">
+        @for (app of columns()[col.value]; track app.id) {
+          <article class="card" cdkDrag [cdkDragData]="app" (click)="edit.emit(app)">
+            <strong>{{ app.company }}</strong>
+            <div>{{ app.title }}</div>
+            @if (app.location) {
+              <div class="muted">{{ app.location }}</div>
+            }
+            @if (app.appliedDate) {
+              <div class="muted">Applied {{ app.appliedDate }}</div>
+            }
+          </article>
+        } @empty {
+          <div class="empty">Drop here</div>
+        }
+      </div>
+    </section>
+  }
+</div>

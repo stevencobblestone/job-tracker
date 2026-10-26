@@ -8,6 +8,12 @@ A small MVP for tracking job applications on a kanban board. No login/auth.
 - `frontend/` — Angular (latest stable), standalone components, Angular CDK (drag-and-drop).
 - Database — PostgreSQL. Local dev runs it in Docker (`docker-compose.yml` at repo root).
 
+## Docker
+- `docker compose up -d --build` runs everything: db, backend (Dockerfile in `backend/`),
+  frontend (Angular built and served by nginx, `frontend/nginx.conf` proxies `/api` to the backend).
+  App at http://localhost:3000. Backend port is not published, to avoid clashing with local dev.
+- `docker compose up -d db` starts only the database for local dev (backend on 8080, `ng serve` on 4200).
+
 ## Configuration
 The backend reads DB settings from environment variables, with local defaults:
 `DB_HOST` (localhost), `DB_PORT` (5432), `DB_NAME` (jobtracker), `DB_USER` (jobtracker),

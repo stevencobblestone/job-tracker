@@ -23,16 +23,32 @@ Drag an application between columns to update its status; every status change is
 | Node.js | 22.22.3+ or 24 LTS | `node -v` |
 | Docker Desktop | any recent | `docker --version` |
 
+For the Docker quick start, only Docker is needed. Java and Node are for local development and tests.
 Maven doesn't need to be installed: the project includes the Maven Wrapper (`mvnw` / `mvnw.cmd`), which downloads it automatically.
 
-## Run it locally
+## Quick start (everything in Docker)
 
-Open three terminals in the project folder.
-
-**1. Start the database** (PostgreSQL in Docker):
+Only Docker is needed. From the project folder:
 
 ```bash
-docker compose up -d
+docker compose up -d --build
+```
+
+Open **http://localhost:3000**. This builds and starts three containers: the database, the backend, and the frontend
+(served by nginx, which also forwards `/api` to the backend). The first build takes a few minutes.
+
+- Stop: `docker compose down` (your data is kept)
+- After changing code, run the same `up -d --build` command again to rebuild
+- Backend logs: `docker compose logs -f backend`
+
+## Run it locally (for development)
+
+This mode reloads the frontend automatically when you edit code. Open three terminals in the project folder.
+
+**1. Start only the database** (PostgreSQL in Docker):
+
+```bash
+docker compose up -d db
 ```
 
 **2. Start the backend** (API on http://localhost:8080). On first start, Flyway creates the tables.
@@ -108,8 +124,8 @@ A missing id returns `404 Not Found`.
 
 ```
 job-tracker/
-├── docker-compose.yml          # local PostgreSQL
-├── backend/                    # Spring Boot API
+├── docker-compose.yml          # database + backend + frontend containers
+├── backend/                    # Spring Boot API (+ Dockerfile)
 │   └── src/main/
 │       ├── java/com/jobtracker/
 │       │   ├── model/          # JPA entities + status enum
@@ -119,7 +135,7 @@ job-tracker/
 │       └── resources/
 │           ├── application.properties
 │           └── db/migration/   # Flyway SQL migrations
-└── frontend/                   # Angular app
+└── frontend/                   # Angular app (+ Dockerfile, nginx.conf)
     └── src/app/
         ├── board/              # kanban board (drag-and-drop)
         ├── application-form/   # add/edit/delete pop-up

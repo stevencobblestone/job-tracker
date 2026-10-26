@@ -1,4 +1,5 @@
-# Local PostgreSQL for development. Start with: docker compose up -d
+# Whole app:      docker compose up -d --build   -> open http://localhost:3000
+# Database only:  docker compose up -d db        (when running backend/frontend yourself)
 services:
   db:
     image: postgres:16
@@ -16,6 +17,27 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  backend:
+    build: ./backend
+    container_name: jobtracker-backend
+    environment:
+      DB_HOST: db                         # the database container's name
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-jobtracker}
+      DB_USER: ${DB_USER:-jobtracker}
+      DB_PASSWORD: ${DB_PASSWORD:-jobtracker}
+    depends_on:
+      db:
+        condition: service_healthy        # wait until Postgres is ready
+
+  frontend:
+    build: ./frontend
+    container_name: jobtracker-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
 
 volumes:
   pgdata:

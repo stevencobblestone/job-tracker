@@ -24,7 +24,8 @@ A small MVP for tracking job applications on a kanban board. No login/auth.
 ## Configuration
 The backend reads DB settings from environment variables, with local defaults:
 `DB_HOST` (localhost), `DB_PORT` (5432), `DB_NAME` (jobtracker), `DB_USER` (jobtracker),
-`DB_PASSWORD` (jobtracker). Pointing at AWS Aurora PostgreSQL later = just change these.
+`DB_PASSWORD` (jobtracker), plus `DB_PARAMS` (e.g. `?sslmode=require`). The hosted demo uses Neon
+with these same variables; no code changes needed to switch databases.
 
 ## Data model
 - `job_application`: id, company, title, url, location, salary_min, salary_max,

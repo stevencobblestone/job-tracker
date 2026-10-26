@@ -110,7 +110,7 @@ The backend reads its database connection from environment variables. The defaul
 | `PORT` | `8080`. Hosting platforms set this automatically |
 | `DEMO_DATA` | `false`. `true` loads 12 sample applications at startup and resets them nightly. **Wipes the database; only for a public demo** |
 
-To use a hosted database such as **AWS Aurora PostgreSQL** or **Neon**, set these variables before starting the backend. No code changes are needed.
+To use a hosted PostgreSQL database such as **Neon** (which the live demo uses), set these variables before starting the backend. No code changes are needed.
 
 ## Deploy the demo (free: Render + Neon)
 

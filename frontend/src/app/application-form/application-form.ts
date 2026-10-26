@@ -1,16 +1,24 @@
 import { Component, OnInit, inject, input, output } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { JobApplication, JobApplicationInput, STATUSES } from '../models';
+import { Icon } from '../icon/icon';
+import { JobApplication, JobApplicationInput, STATUSES, Status } from '../models';
 
-/** Form shown in a pop-up for adding a new application or editing/deleting an existing one. */
+/** "Add a role" pop-up for adding a new application or editing/deleting an existing one. */
 @Component({
   selector: 'app-application-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Icon],
   templateUrl: './application-form.html',
+  host: {
+    '(document:keydown.escape)': 'cancelled.emit()',
+    '(document:keydown.control.enter)': 'submit()',
+    '(document:keydown.meta.enter)': 'submit()',
+  },
 })
 export class ApplicationForm implements OnInit {
   /** The application being edited, or null when adding a new one. */
   application = input<JobApplication | null>(null);
+  /** Stage to start with when adding (e.g. from a column's "+" button). */
+  initialStatus = input<Status>('WISHLIST');
   saved = output<JobApplicationInput>();
   deleted = output<void>();
   cancelled = output<void>();
@@ -27,16 +35,16 @@ export class ApplicationForm implements OnInit {
       salaryMin: [null as number | null, Validators.min(0)],
       salaryMax: [null as number | null, Validators.min(0)],
       appliedDate: [''],
-      status: ['WISHLIST'],
+      status: ['WISHLIST' as Status],
       notes: [''],
     },
     { validators: salaryRangeValidator },
   );
 
   ngOnInit() {
-    // When editing, fill the form with the existing values.
     const app = this.application();
     if (app) {
+      // Editing: fill the form with the existing values.
       this.form.patchValue({
         ...app,
         url: app.url ?? '',
@@ -44,7 +52,13 @@ export class ApplicationForm implements OnInit {
         appliedDate: app.appliedDate ?? '',
         notes: app.notes ?? '',
       });
+    } else {
+      this.form.patchValue({ status: this.initialStatus() });
     }
+  }
+
+  setStatus(status: Status) {
+    this.form.controls.status.setValue(status);
   }
 
   submit() {
@@ -62,7 +76,7 @@ export class ApplicationForm implements OnInit {
       salaryMin: v.salaryMin ?? null,
       salaryMax: v.salaryMax ?? null,
       appliedDate: v.appliedDate || null,
-      status: v.status as JobApplicationInput['status'],
+      status: v.status!,
       notes: v.notes || null,
     });
   }

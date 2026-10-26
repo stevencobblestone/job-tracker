@@ -9,9 +9,10 @@ Drag an application between columns to update its status; every status change is
 
 - Kanban board with one column per status: Wishlist, Applied, Phone screen, Interview, Offer, Rejected, Withdrawn
 - Drag-and-drop between columns (Angular CDK) updates the status through the REST API
+- Table view of the same data, plus search by company or role
 - Add, edit and delete applications: company, title, URL, location, salary range, notes, applied date
 - Status history: each change is logged as an event row
-- Stats summary: number of applications per status
+- Stats strip (tracked, active, interviews, offers, response rate) and an Overview page with pipeline bars
 - Input validation on both frontend and backend
 - API integration tests against a real PostgreSQL (Testcontainers)
 
@@ -137,9 +138,13 @@ job-tracker/
 │           └── db/migration/   # Flyway SQL migrations
 └── frontend/                   # Angular app (+ Dockerfile, nginx.conf)
     └── src/app/
+        ├── sidebar/            # left navigation + pipeline counts
+        ├── metrics/            # stats strip under the page title
         ├── board/              # kanban board (drag-and-drop)
-        ├── application-form/   # add/edit/delete pop-up
-        ├── stats-bar/          # counts per status
+        ├── applications-table/ # table view
+        ├── overview/           # pipeline bars page
+        ├── application-form/   # "Add a role" add/edit/delete pop-up
+        ├── icon/               # small set of inline SVG icons
         └── application.service.ts  # HTTP calls to the API
 ```
 

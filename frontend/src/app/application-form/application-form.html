@@ -1,66 +1,92 @@
-<div class="backdrop" (click)="cancelled.emit()">
-  <!-- stopPropagation: clicking inside the form shouldn't close it -->
-  <form class="dialog" [formGroup]="form" (ngSubmit)="submit()" (click)="$event.stopPropagation()">
-    <h2>{{ application() ? 'Edit application' : 'Add application' }}</h2>
-
-    <label>Company *
-      <input formControlName="company" />
-    </label>
-    @if (form.controls.company.touched && form.controls.company.invalid) {
-      <small class="error">Company is required.</small>
-    }
-
-    <label>Job title *
-      <input formControlName="title" />
-    </label>
-    @if (form.controls.title.touched && form.controls.title.invalid) {
-      <small class="error">Job title is required.</small>
-    }
-
-    <label>Job posting URL
-      <input formControlName="url" type="url" />
-    </label>
-
-    <label>Location
-      <input formControlName="location" />
-    </label>
-
-    <div class="row">
-      <label>Salary min
-        <input formControlName="salaryMin" type="number" min="0" />
-      </label>
-      <label>Salary max
-        <input formControlName="salaryMax" type="number" min="0" />
-      </label>
+<div class="scrim" (click)="cancelled.emit()">
+  <!-- stopPropagation: clicking inside the modal shouldn't close it -->
+  <form class="modal" [formGroup]="form" (ngSubmit)="submit()" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <div>
+        <div class="eyebrow">{{ application() ? 'EDIT ENTRY · APPLICATION' : 'NEW ENTRY · APPLICATION' }}</div>
+        <h2 class="modal-title">{{ application() ? 'Edit role' : 'Add a role' }}</h2>
+      </div>
+      <button type="button" class="close-btn" title="Close" (click)="cancelled.emit()"><app-icon name="x" /></button>
     </div>
-    @if (form.errors?.['salaryRange']) {
-      <small class="error">Min salary can't be more than max salary.</small>
-    }
 
-    <div class="row">
-      <label>Applied date
-        <input formControlName="appliedDate" type="date" />
-      </label>
-      <label>Status
-        <select formControlName="status">
-          @for (s of statuses; track s.value) {
-            <option [value]="s.value">{{ s.label }}</option>
+    <div class="modal-body">
+      <div class="field-row">
+        <label class="field">
+          <span class="field-label">COMPANY *</span>
+          <input class="input" formControlName="company" placeholder="e.g. Kestrel" />
+          @if (form.controls.company.touched && form.controls.company.invalid) {
+            <small class="error">Company is required.</small>
           }
-        </select>
+        </label>
+        <label class="field">
+          <span class="field-label">ROLE *</span>
+          <input class="input" formControlName="title" placeholder="e.g. Product Design Lead" />
+          @if (form.controls.title.touched && form.controls.title.invalid) {
+            <small class="error">Role is required.</small>
+          }
+        </label>
+      </div>
+
+      <label class="field">
+        <span class="field-label">JOB POSTING LINK</span>
+        <input class="input" formControlName="url" type="url" placeholder="https://" />
+      </label>
+
+      <div class="field">
+        <span class="field-label">STAGE</span>
+        <div class="segment">
+          @for (s of statuses; track s.value) {
+            <button type="button" class="segment-option" [class.selected]="form.controls.status.value === s.value"
+                    (click)="setStatus(s.value)">
+              <span class="stage-dot small" [style.background]="s.color"></span>{{ s.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <span class="field-label">COMPENSATION RANGE</span>
+          <div class="range">
+            <input class="input" formControlName="salaryMin" type="number" min="0" placeholder="Min, e.g. 130000" aria-label="Salary min" />
+            <span class="range-sep">—</span>
+            <input class="input" formControlName="salaryMax" type="number" min="0" placeholder="Max" aria-label="Salary max" />
+          </div>
+          @if (form.errors?.['salaryRange']) {
+            <small class="error">Min can't be more than max.</small>
+          }
+        </div>
+        <label class="field">
+          <span class="field-label">LOCATION / MODE</span>
+          <input class="input" formControlName="location" placeholder="Remote · US" />
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label class="field">
+          <span class="field-label">APPLIED DATE</span>
+          <input class="input" formControlName="appliedDate" type="date" />
+        </label>
+        <div class="field"></div>
+      </div>
+
+      <label class="field">
+        <span class="field-label">NOTES</span>
+        <textarea class="input textarea" formControlName="notes" rows="3"
+                  placeholder="Who referred you, what the team cares about, next steps…"></textarea>
       </label>
     </div>
 
-    <label>Notes
-      <textarea formControlName="notes" rows="3"></textarea>
-    </label>
-
-    <div class="actions">
+    <div class="modal-foot">
       @if (application()) {
-        <button type="button" class="danger" (click)="confirmDelete()">Delete</button>
+        <button type="button" class="btn danger" (click)="confirmDelete()">Delete</button>
+      } @else {
+        <span class="foot-hint">ESC TO CLOSE · CTRL+ENTER TO SAVE</span>
       }
-      <span class="spacer"></span>
-      <button type="button" (click)="cancelled.emit()">Cancel</button>
-      <button type="submit" class="primary">Save</button>
+      <div class="foot-buttons">
+        <button type="button" class="btn" (click)="cancelled.emit()">Cancel</button>
+        <button type="submit" class="btn primary">{{ application() ? 'Save changes' : 'Add to pipeline' }}</button>
+      </div>
     </div>
   </form>
 </div>

@@ -35,8 +35,12 @@ The backend reads DB settings from environment variables, with local defaults:
 - `GET /api/stats` — counts per status
 
 ## Frontend
-- Kanban board, one column per status; drag a card to another column → PATCH status.
-- Add/edit/delete form; small stats summary.
+- UI follows the "Pursuit" design (dark sidebar, condensed titles, mono labels); colors/fonts
+  are CSS variables at the top of `frontend/src/styles.css`. All styles live in that one file.
+- Applications page: Board view (one column per status, drag → PATCH status) or Table view;
+  search box filters by company/role. Overview page: pipeline bars per status.
+- "Add a role" modal for add/edit/delete; metrics strip computed from `/api/stats`.
+- Not built (no backend for them yet): Interviews, Contacts, Documents, Source, Next step.
 
 ## Build stages
 1. (a) docker-compose + Flyway migration

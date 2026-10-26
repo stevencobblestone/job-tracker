@@ -2,24 +2,49 @@
 <div class="board" cdkDropListGroup>
   @for (col of statuses; track col.value) {
     <section class="column">
-      <h2>{{ col.label }} <span class="count">{{ columns()[col.value].length }}</span></h2>
+      <div class="stage-rule" [style.background]="col.color"></div>
+      <div class="column-head">
+        <span class="column-head-left">
+          <span class="stage-dot" [style.background]="col.color"></span>
+          <span class="stage-name">{{ col.label }}</span>
+          <span class="stage-count">{{ pad(columns()[col.value].length) }}</span>
+        </span>
+        <button class="icon-btn" title="Add to {{ col.label }}" (click)="add.emit(col.value)">
+          <app-icon name="plus" [size]="13" />
+        </button>
+      </div>
 
       <div class="card-list" cdkDropList [cdkDropListData]="col.value" (cdkDropListDropped)="onDrop($event)">
         @for (app of columns()[col.value]; track app.id) {
-          <article class="card" cdkDrag [cdkDragData]="app" (click)="edit.emit(app)">
-            <strong>{{ app.company }}</strong>
-            <div>{{ app.title }}</div>
-            @if (app.location) {
-              <div class="muted">{{ app.location }}</div>
+          <article class="card" [class.offer]="app.status === 'OFFER'" cdkDrag [cdkDragData]="app"
+                   (click)="edit.emit(app)">
+            <div class="card-head">
+              <span class="company-mark" [style.background]="col.color">{{ app.company.charAt(0) }}</span>
+              <span class="card-company">{{ app.company }}</span>
+            </div>
+            <div class="card-role">{{ app.title }}</div>
+            @if (formatSalary(app.salaryMin, app.salaryMax) || app.location) {
+              <div class="card-meta">
+                <span class="card-salary">{{ formatSalary(app.salaryMin, app.salaryMax) }}</span>
+                @if (formatSalary(app.salaryMin, app.salaryMax) && app.location) {
+                  <span class="meta-sep">·</span>
+                }
+                <span>{{ app.location }}</span>
+              </div>
             }
-            @if (app.appliedDate) {
-              <div class="muted">Applied {{ app.appliedDate }}</div>
-            }
+            <div class="card-foot">
+              <app-icon name="calendar" [size]="11" />
+              {{ app.appliedDate ? 'APPLIED ' + formatDay(app.appliedDate) : 'ADDED ' + formatDay(app.createdAt) }}
+            </div>
           </article>
         } @empty {
-          <div class="empty">Drop here</div>
+          <div class="drop-hint">DROP HERE</div>
         }
       </div>
+
+      <button class="add-role" (click)="add.emit(col.value)"><app-icon name="plus" [size]="12" /> Add role</button>
     </section>
   }
 </div>
+
+<div class="board-foot"><app-icon name="move-horizontal" [size]="12" /> DRAG CARDS TO MOVE BETWEEN STAGES</div>

@@ -1,21 +1,68 @@
-<header class="topbar">
-  <h1>Job Tracker</h1>
-  <button class="primary" (click)="openNew()">+ Add application</button>
-</header>
+<div class="shell">
+  <app-sidebar [page]="page()" [stats]="stats()" (navigate)="page.set($event)" />
 
-<main>
-  @if (error()) {
-    <p class="error-banner">{{ error() }}</p>
-  }
+  <div class="main">
+    <header class="topbar">
+      <div class="breadcrumb">
+        <span>WORKSPACE</span><span class="crumb-sep">/</span>
+        <span class="crumb-current">{{ page() === 'overview' ? 'OVERVIEW' : 'APPLICATIONS' }}</span>
+      </div>
+      @if (page() === 'applications') {
+        <label class="search">
+          <app-icon name="search" [size]="13" />
+          <input placeholder="Search roles, companies" [value]="query()" (input)="query.set($any($event.target).value)" />
+        </label>
+      }
+    </header>
 
-  <app-stats-bar [stats]="stats()" />
+    <div class="page-header">
+      <div class="title-row">
+        <div>
+          <h1 class="page-title">{{ page() === 'overview' ? 'Overview' : 'Applications' }}</h1>
+          <div class="page-subtitle">
+            {{ total() }} {{ total() === 1 ? 'ROLE' : 'ROLES' }} IN THE LEDGER · {{ inMotion() }} IN MOTION
+            @if (query() && page() === 'applications') { · {{ visibleApps().length }} MATCHING “{{ query() }}” }
+          </div>
+        </div>
+        <div class="title-actions">
+          @if (page() === 'applications') {
+            <div class="view-switch">
+              <button [class.selected]="view() === 'board'" (click)="view.set('board')">
+                <app-icon name="columns-3" [size]="13" /> Board
+              </button>
+              <button [class.selected]="view() === 'table'" (click)="view.set('table')">
+                <app-icon name="table-2" [size]="13" /> Table
+              </button>
+            </div>
+          }
+          <button class="btn primary" (click)="openNew()"><app-icon name="plus" [size]="13" /> New application</button>
+        </div>
+      </div>
 
-  <app-board [applications]="applications()" (edit)="openEdit($event)" (statusChange)="changeStatus($event)" />
-</main>
+      <app-metrics [stats]="stats()" />
+    </div>
+
+    @if (error()) {
+      <p class="error-banner">{{ error() }}</p>
+    }
+
+    <main class="page-body">
+      @if (page() === 'overview') {
+        <app-overview [stats]="stats()" (viewBoard)="showBoard()" />
+      } @else if (view() === 'board') {
+        <app-board [applications]="visibleApps()" (edit)="openEdit($event)" (add)="openNew($event)"
+                   (statusChange)="changeStatus($event)" />
+      } @else {
+        <app-applications-table [applications]="visibleApps()" (edit)="openEdit($event)" />
+      }
+    </main>
+  </div>
+</div>
 
 @if (formOpen()) {
   <app-application-form
     [application]="editing()"
+    [initialStatus]="newStatus()"
     (saved)="save($event)"
     (deleted)="remove()"
     (cancelled)="closeForm()"

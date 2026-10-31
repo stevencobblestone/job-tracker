@@ -7,9 +7,9 @@ services:
     runtime: docker
     plan: free
     region: ohio                             # same area as the Neon database (AWS us-east-2) = faster queries
-    rootDir: backend
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    rootDir: backend                         # paths below are relative to this folder
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /api/stats
     envVars:
       # From your Neon connection details (Render asks for these the first time)
@@ -35,9 +35,9 @@ services:
   - type: web
     name: pursuit
     runtime: static
-    rootDir: frontend
+    rootDir: frontend                        # paths below are relative to this folder
     buildCommand: npm ci && npx ng build
-    staticPublishPath: ./frontend/dist/frontend/browser
+    staticPublishPath: ./dist/frontend/browser
     envVars:
       - key: NODE_VERSION
         value: "24"

@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { Icon } from '../icon/icon';
-import { JobApplication, STATUSES, Status, formatDay, formatSalary, linkFor } from '../models';
+import { CLOSED_STATUSES, JobApplication, STATUSES, Status, formatDay, formatSalary, linkFor } from '../models';
 
 /** Kanban board: one column per status. Dragging a card to another column emits statusChange. */
 @Component({
@@ -11,11 +11,15 @@ import { JobApplication, STATUSES, Status, formatDay, formatSalary, linkFor } fr
 })
 export class Board {
   applications = input.required<JobApplication[]>();
+  hideClosed = input(false); // hide the Rejected/Withdrawn columns
   edit = output<JobApplication>();
   add = output<Status>(); // "+" or "Add role" in a column
   statusChange = output<{ app: JobApplication; status: Status }>();
 
-  readonly statuses = STATUSES;
+  /** Columns to show, in order. */
+  readonly statuses = computed(() =>
+    this.hideClosed() ? STATUSES.filter((s) => !CLOSED_STATUSES.includes(s.value)) : STATUSES,
+  );
   readonly formatSalary = formatSalary;
   readonly formatDay = formatDay;
   readonly linkFor = linkFor;

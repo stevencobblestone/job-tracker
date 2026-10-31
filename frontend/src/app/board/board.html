@@ -1,6 +1,6 @@
 <!-- cdkDropListGroup lets cards move between any of the columns inside it -->
 <div class="board" cdkDropListGroup>
-  @for (col of statuses; track col.value) {
+  @for (col of statuses(); track col.value) {
     <section class="column">
       <div class="stage-rule" [style.background]="col.color"></div>
       <div class="column-head">

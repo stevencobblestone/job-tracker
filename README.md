@@ -21,6 +21,7 @@ Drag an application between columns to update its status; every status change is
 - Kanban board with one column per status: Wishlist, Applied, Phone screen, Interview, Offer, Rejected, Withdrawn
 - Drag-and-drop between columns (Angular CDK) updates the status through the REST API
 - Table view of the same data, plus search by company or role
+- "Hide closed" toggle (on by default) hides Rejected and Withdrawn so the active pipeline fits on screen
 - Add, edit and delete applications: company, title, URL, location, salary (yearly or hourly; a range, one amount, or blank), notes, applied date
 - Status history: each change is logged as an event row and shown in the edit pop-up
 - Applied date fills in automatically (today) when an application moves to Applied without one

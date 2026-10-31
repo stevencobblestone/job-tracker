@@ -20,6 +20,9 @@ export const STATUSES: { value: Status; label: string; color: string }[] = [
   { value: 'WITHDRAWN', label: 'Withdrawn', color: '#9AA6A0' },
 ];
 
+/** Stages where the process is over. "Hide closed" hides these. */
+export const CLOSED_STATUSES: Status[] = ['REJECTED', 'WITHDRAWN'];
+
 export function statusInfo(status: Status) {
   return STATUSES.find((s) => s.value === status)!;
 }

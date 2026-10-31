@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { retry } from 'rxjs';
 import { ApplicationService } from './application.service';
-import { JobApplication, JobApplicationInput, Stats, Status } from './models';
+import { CLOSED_STATUSES, JobApplication, JobApplicationInput, STATUSES, Stats, Status } from './models';
 import { Icon } from './icon/icon';
 import { Sidebar, Page } from './sidebar/sidebar';
 import { Metrics } from './metrics/metrics';
@@ -9,6 +9,15 @@ import { Board } from './board/board';
 import { ApplicationsTable } from './applications-table/applications-table';
 import { Overview } from './overview/overview';
 import { ApplicationForm } from './application-form/application-form';
+
+/** Saved "Hide closed" choice; defaults to on. */
+function readHideClosed(): boolean {
+  try {
+    return localStorage.getItem('hideClosed') !== 'false';
+  } catch {
+    return true;
+  }
+}
 
 /** Top-level page: loads data from the API and connects the sidebar, pages and form. */
 @Component({
@@ -27,13 +36,31 @@ export class App implements OnInit {
   readonly page = signal<Page>('applications');
   readonly view = signal<'board' | 'table'>('board');
 
+  // "Hide closed": hides Rejected/Withdrawn columns and rows. On by default so the board
+  // fits the screen; the choice is remembered in this browser.
+  readonly hideClosed = signal(readHideClosed());
+  readonly closedCount = computed(
+    () => this.applications().filter((a) => CLOSED_STATUSES.includes(a.status)).length,
+  );
+
   // Search box: filters by company or role.
   readonly query = signal('');
   readonly visibleApps = computed(() => {
     const q = this.query().trim().toLowerCase();
-    const apps = this.applications();
-    return q ? apps.filter((a) => (a.company + ' ' + a.title).toLowerCase().includes(q)) : apps;
+    return this.applications().filter(
+      (a) =>
+        (!this.hideClosed() || !CLOSED_STATUSES.includes(a.status)) &&
+        (!q || (a.company + ' ' + a.title).toLowerCase().includes(q)),
+    );
   });
+  readonly stageCount = computed(() => STATUSES.length - (this.hideClosed() ? CLOSED_STATUSES.length : 0));
+
+  toggleHideClosed() {
+    this.hideClosed.update((v) => !v);
+    try {
+      localStorage.setItem('hideClosed', String(this.hideClosed()));
+    } catch {} // storage can be blocked (private mode); the toggle still works for this visit
+  }
 
   readonly total = computed(() => this.applications().length);
   readonly inMotion = computed(

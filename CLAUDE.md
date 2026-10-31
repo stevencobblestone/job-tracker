@@ -46,7 +46,8 @@ with these same variables; no code changes needed to switch databases.
 - UI follows the "Pursuit" design (dark sidebar, condensed titles, mono labels); colors/fonts
   are CSS variables at the top of `frontend/src/styles.css`. All styles live in that one file.
 - Applications page: Board view (one column per status, drag → PATCH status) or Table view;
-  search box filters by company/role. Overview page: pipeline bars per status.
+  search box filters by company/role. "Hide closed" toggle (default on, saved in localStorage)
+  hides REJECTED/WITHDRAWN (`CLOSED_STATUSES`). Overview page: pipeline bars per status.
 - "Add a role" modal for add/edit/delete; in edit mode it shows the status history
   (`GET /{id}/events`). Job links open from cards, table rows and the modal (`linkFor` in models.ts).
 - Metrics strip computed from `/api/stats`.

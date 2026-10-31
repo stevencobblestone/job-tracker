@@ -27,6 +27,7 @@ import { Component, input } from '@angular/core';
         }
         @case ('move-horizontal') { <path d="m18 8 4 4-4 4" /><path d="M2 12h20" /><path d="m6 8-4 4 4 4" /> }
         @case ('arrow-up-right') { <path d="M7 7h10v10" /><path d="M7 17 17 7" /> }
+        @case ('check') { <path d="M20 6 9 17l-5-5" /> }
       }
     </svg>
   `,

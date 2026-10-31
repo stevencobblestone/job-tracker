@@ -53,10 +53,20 @@
     }
 
     <main class="page-body">
+      @if (page() === 'applications') {
+        <div class="list-toolbar">
+          <span class="list-meta">{{ stageCount() }} STAGES · {{ visibleApps().length }} VISIBLE</span>
+          <button class="check-toggle" [class.on]="hideClosed()" [attr.aria-pressed]="hideClosed()"
+                  (click)="toggleHideClosed()">
+            <span class="check-box">@if (hideClosed()) { <app-icon name="check" [size]="10" /> }</span>
+            Hide closed ({{ closedCount() }})
+          </button>
+        </div>
+      }
       @if (page() === 'overview') {
         <app-overview [stats]="stats()" (viewBoard)="showBoard()" />
       } @else if (view() === 'board') {
-        <app-board [applications]="visibleApps()" (edit)="openEdit($event)" (add)="openNew($event)"
+        <app-board [applications]="visibleApps()" [hideClosed]="hideClosed()" (edit)="openEdit($event)" (add)="openNew($event)"
                    (statusChange)="changeStatus($event)" />
       } @else {
         <app-applications-table [applications]="visibleApps()" (edit)="openEdit($event)" />

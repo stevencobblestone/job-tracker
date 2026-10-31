@@ -15,8 +15,11 @@ A small MVP for tracking job applications on a kanban board. No login/auth.
 - `docker compose up -d db` starts only the database for local dev (backend on 8080, `ng serve` on 4200).
 
 ## Hosting (public demo)
-- `render.yaml`: Render free plan. Backend = Docker web service `pursuit-api` (sleeps when idle),
-  frontend = static site `pursuit` with a rewrite `/api/*` → backend URL. Database on Neon (free).
+- `render.yaml`: Render free plan, Ohio region. Backend = Docker web service `pursuit-api`
+  (live at https://pursuit-api-l8yp.onrender.com, sleeps when idle), frontend = static site `pursuit`
+  with a rewrite `/api/*` → that backend URL. Database on Neon (free, us-east-2).
+  Paths in render.yaml are relative to each service's `rootDir`. The DB_* secrets are set in
+  Render's Environment tab (the Blueprint didn't prompt for them).
 - `DEMO_DATA=true` loads `demo-data.sql` (wipes + 12 sample apps) at startup and nightly. Never on real data.
 - CI: `.github/workflows/ci.yml` runs backend tests + frontend build on every push.
 - README media lives in `docs/screenshots/`.

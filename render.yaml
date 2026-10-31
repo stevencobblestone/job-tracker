@@ -42,11 +42,11 @@ services:
       - key: NODE_VERSION
         value: "24"
     routes:
-      # Forward API calls to the backend. If Render gives the backend a different
-      # address than pursuit-api.onrender.com, change it here (and in the README).
+      # Forward API calls to the backend. Render picked this address when the service was created;
+      # if you recreate the backend and it gets a new one, update it here.
       - type: rewrite
         source: /api/*
-        destination: https://pursuit-api.onrender.com/api/*
+        destination: https://pursuit-api-l8yp.onrender.com/api/*
       # Everything else is the Angular app
       - type: rewrite
         source: /*

@@ -82,25 +82,31 @@ export class App implements OnInit {
     this.reload();
   }
 
-  /** Fetch the list and the stats again from the backend. */
+  /** Fetch the list, then the stats, from the backend. */
   reload() {
     this.api
       .list()
-      .pipe(retry({ count: 12, delay: 5000 })) // keep trying for ~1 minute while the server wakes up
+      .pipe(retry({ count: 24, delay: 5000 })) // keep trying for ~2 minutes while a sleeping server wakes up
       .subscribe({
         next: (apps) => {
           this.applications.set(apps);
           this.error.set(null);
           this.loading.set(false);
+          // Only now ask for the stats: the server is awake, so this answers right away
+          // instead of racing the list while the server starts.
+          this.loadStats();
         },
         error: () => {
           this.loading.set(false);
           this.error.set('Could not reach the backend. Is it running?');
         },
       });
+  }
+
+  private loadStats() {
     this.api
       .stats()
-      .pipe(retry({ count: 12, delay: 5000 }))
+      .pipe(retry({ count: 3, delay: 2000 }))
       .subscribe({ next: (s) => this.stats.set(s), error: () => {} });
   }
 

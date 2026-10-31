@@ -7,8 +7,7 @@ Drag an application between columns to update its status; every status change is
 
 **Stack:** Spring Boot 3.5 (Java 21) · Angular 22 · PostgreSQL 16 · Flyway · Docker · GitHub Actions
 
-<!-- Live demo: add the link here after deploying, e.g.
-**[Live demo](https://pursuit.onrender.com)** (free hosting: the first load can take up to a minute) -->
+**[Live demo](https://pursuit-hpch.onrender.com)**: sample data, resets nightly. It runs on free hosting that sleeps when idle, so the first load can take up to a minute.
 
 ![Dragging an application from Applied to Phone screen](docs/screenshots/demo.gif)
 
@@ -124,8 +123,10 @@ The database runs on [Neon](https://neon.tech)'s free plan, which doesn't expire
    database name, user and password.
 3. **Create the services on Render:** sign up with GitHub, then **New → Blueprint** and pick this repo.
    Render reads `render.yaml` and asks for `DB_HOST`, `DB_NAME`, `DB_USER` and `DB_PASSWORD`: paste the Neon values.
-4. **Check the backend address.** Render names it `pursuit-api.onrender.com` when that name is free.
-   If it got a different address, put it in the `/api/*` rule in `render.yaml`, push, and Render redeploys.
+   If Render doesn't ask (it may only ask on the very first sync), add them under **pursuit-api → Environment**.
+4. **Check the backend address.** Render adds a random suffix when a name is taken (this demo's is
+   `pursuit-api-l8yp.onrender.com`). Put your backend's address in the `/api/*` rule in `render.yaml`,
+   push, and Render redeploys.
 5. Open the frontend's address (`pursuit.onrender.com` or similar). You should see the sample data.
 
 **Good to know:**

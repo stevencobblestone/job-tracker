@@ -6,6 +6,7 @@ services:
     name: pursuit-api
     runtime: docker
     plan: free
+    region: ohio                             # same area as the Neon database (AWS us-east-2) = faster queries
     rootDir: backend
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
